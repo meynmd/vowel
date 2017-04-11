@@ -1,3 +1,5 @@
+import sys
+
 '''
 MakeWordRecognizer(name, word)
 
@@ -8,15 +10,21 @@ returns (first state, accept state, rules)
 '''
 def MakeWordRecognizer(name, word):
     rec = ''
-    for i in range(len(word)):
+    count = 0
+    for c in word:
+        if c == ' ' or c == '\n':
+	    continue
+
+        count += 1
+
         # write the string for this transition rule
-        rule = '(' + name + str(i) + \
-            ' (' + name + str(i + 1) + \
-            ' ' + word[i] + '))\n'
+        rule = '(' + name + str(count) + \
+            ' (' + name + str(count + 1) + \
+            ' ' + c + '))\n'
 
         rec = rec + rule
 
-    return (rec, name + '0', name + str(len(word)))
+    return (rec, name + '1', name + str(count + 1))
 
 
 
@@ -32,6 +40,7 @@ def MakeLanguageRecognizer(words):
     fsa = fsa + '(S (S _))\n'
     count = 0
     for word in words:
+        #print 'processing word ' + word + '...'
         count += 1
         wr = MakeWordRecognizer(str(count) + '_', word)
         wordRec = wr[0]
@@ -44,8 +53,6 @@ def MakeLanguageRecognizer(words):
     fsa = fsa + '(S (F *e*))\n'
     return fsa
 
-
-
-language = ['THE', 'AND']
-f = MakeLanguageRecognizer(language)
-print(f)
+lines = sys.stdin.readlines()
+language = MakeLanguageRecognizer(lines)
+print(language)
