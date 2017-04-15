@@ -41,7 +41,6 @@ def construct_fsa(cons_str,cur_state,fsa_dict,cur_final_state=0):
 
 
 
-
 def check_fsa(cur_str,fsa_dict):
     cur_state = 's0'
     #accepted = True
