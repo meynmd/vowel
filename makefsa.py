@@ -111,16 +111,16 @@ def makeFsa(wordProbDict, bigramDict):
         # insert transition from initial state => 
         # state corresponding to this word as start of sentence
         stateName = ''.join(list(word.split()))
-        fsa = fsa + '(F (' + stateName + ' \"' + word + '\" ' + str(prob) + '))\n'
-        fsa = fsa + '(F (' + stateName + ' \"' + word + ' _ '+ '\" ' + str(prob) + '))\n'
-        fsa = fsa + '(' + stateName + ' (F *e* 0.001))\n'
+        fsa = fsa + '(F (' + stateName + ' ' + word + ' ' + str(prob + 0.05) + '))\n'
+        fsa = fsa + '(F (' + stateName + ' ' + word + ' _ '+ ' ' + str(prob + 0.05) + '))\n'
+        fsa = fsa + '(' + stateName + ' (F *e* 0.005))\n'
 
         # insert transitions corresponding to bigrams in dictionary
         bigs = [((w1, w2), p) for ((w1, w2), p) in bigramDict.items() if w1 == word]
         for ((w1, w2), p) in bigs:
             nextStateName = ''.join(list(w2.split()))
-            fsa = fsa + '(' + stateName + ' (' + nextStateName + ' \"' + w2 + '\" ' + str(p) + '))\n'
-            #fsa = fsa + '(' + stateName + ' (' + nextStateName + ' \"' + w2 + ' _ ' + '\" ' + str(p) + '))\n'
+            fsa = fsa + '(' + stateName + ' (' + nextStateName + ' ' + w2 + ' ' + str(p + 0.05) + '))\n'
+            #fsa = fsa + '(' + stateName + ' (' + nextStateName + ' ' + w2 + ' _ ' + ' ' + str(p) + '))\n'
         fsa = fsa + '\n'
 
     return fsa
