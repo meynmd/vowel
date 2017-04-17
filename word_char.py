@@ -37,11 +37,11 @@ def construct_word_character(data_new):
     
     start = '(s (<BOS> "<BOS>" *e*))'
     end = '(<EOS> (e *e* *e*))'
-    start_set=[]
-    all_set = []
+    start_set=set()
+    all_set = set()
 
-    start_set+=[start]
-    start_set+=[end]
+    start_set.add(start)
+
     for data in data_new:
 
         for i in range(len(data)):
@@ -52,8 +52,9 @@ def construct_word_character(data_new):
                 output_str = data[i]
                 temp_str= '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str +' ))'
 
-                if temp_str not in all_set:
-                    all_set+=[temp_str]
+                temp_str.add(all_set)
+                # if temp_str not in all_set:
+                #     all_set+=[temp_str]
 
                 current_state=nex_state
                 continue
@@ -71,16 +72,18 @@ def construct_word_character(data_new):
                 input_str = '*e*'
                 output_str = '_'
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
-                if temp_str not in all_set:
-                    all_set+=[temp_str]
+                temp_str.add(all_set)
+                # if temp_str not in all_set:
+                #     all_set+=[temp_str]
 
 
                 nex_state = '<EOS>'
                 input_str = '"<EOS>"'
                 output_str = '*e*'
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
-                if temp_str not in all_set:
-                    all_set+=[temp_str]
+                temp_str.add(all_set)
+                # if temp_str not in all_set:
+                #     all_set+=[temp_str]
 
 
 
@@ -93,9 +96,10 @@ def construct_word_character(data_new):
                 input_str = '*e*'
                 output_str = data[i]
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
+                temp_str.add(all_set)
 
-                if temp_str not in all_set:
-                    all_set += [temp_str]
+                # if temp_str not in all_set:
+                #     all_set += [temp_str]
 
                 current_state = nex_state
 

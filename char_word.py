@@ -1,8 +1,8 @@
 import sys
 
 def construct_char_word(data_new):
-    start_set = []
-    all_set=[]
+    start_set = set()
+    all_set=set()
     for j in range(len(data_new)):
         data=data_new[j]
         count=0
@@ -11,8 +11,9 @@ def construct_char_word(data_new):
             if i == 0:
                 next_state = data[i] + '_' + str(i)+'_' + str(j)
                 temp_str = '(s ' + '(' + next_state + ' ' + data[i] + ' "<BOS>" ))'
-                if temp_str not in start_set:
-                    start_set += [temp_str]
+                start_set.add(temp_str)
+                # if temp_str not in start_set:
+                #     start_set += [temp_str]
                 cur_state = next_state
             else:
                 next_state = cur_state + data[i] + '_' + str(i) + '_' + str(j)
@@ -24,12 +25,14 @@ def construct_char_word(data_new):
                     word = data.split('_')[-1]
                     word = '"'+word+'"'
                     temp_str = '(' + cur_state + ' (' + next_state + ' ' + data[i] + ' ' + word + ' ))'
-                    if temp_str not in all_set:
-                        all_set += [temp_str]
+                    all_set.add(temp_str)
+                    # if temp_str not in all_set:
+                    #     all_set += [temp_str]
                     cur_state = next_state
                     temp_str = '(' + cur_state + ' ( e *e* *e* ))'
-                    if temp_str not in all_set:
-                        all_set += [temp_str]
+                    all_set.add(temp_str)
+                    # if temp_str not in all_set:
+                    #     all_set += [temp_str]
 
 
                 if not word:
@@ -37,8 +40,10 @@ def construct_char_word(data_new):
 
                 if i!=len(data)-1:
                     temp_str = '(' + cur_state +' ('+next_state+' '+ data[i]+' '+word+' ))'
-                    if temp_str not in all_set:
-                        all_set+=[temp_str]
+                    all_set.add(temp_str)
+
+                    # if temp_str not in all_set:
+                    #     all_set+=[temp_str]
 
                     cur_state=next_state
 
