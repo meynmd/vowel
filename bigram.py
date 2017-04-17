@@ -47,8 +47,8 @@ def construct_wfst(count_dict,unique_words):
                         temp_str='(' + cur_state + ' (' + next_state + ' "' + cur_state + '" "' + cur_state + '" ' + str(prob) + '))'
                         if temp_str not in all_set:
                             all_set += [temp_str ]
-                        #cur_state = next_state
-                        temp_str= '(' + cur_state + ' (e' +   ' *e*' +  ' "' + cur_state + '" ' + str('1') + '))'
+                        cur_state_1 = next_state
+                        temp_str= '(' + cur_state_1 + ' (e' +   ' *e*' +  ' "' + cur_state_1 + '" ' + str('1') + '))'
                         if temp_str not in all_set:
                             all_set+=[temp_str]
                     else:
@@ -68,7 +68,7 @@ def construct_wfst(count_dict,unique_words):
 if __name__ == '__main__':
 
     data = []
-    with open('strings','r') as fp:
+    with open('corpus_full_formatted_data.txt','r') as fp:
         for line in fp.readlines():
             line1=line.split('\n')[0]
             temp_data = line1.split('_')

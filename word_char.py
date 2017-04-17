@@ -114,7 +114,8 @@ def construct_word_character(data_new):
 if __name__ == '__main__':
 
     data = []
-    with open('strings','r') as fp:
+
+    with open('corpus_full_formatted_data.txt','r') as fp:
         for line in fp.readlines():
             line1=line.split('\n')[0]
             temp_data = line1.split('_')

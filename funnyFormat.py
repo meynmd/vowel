@@ -13,7 +13,7 @@ if __name__ == '__main__':
     text = ''
 
     #with open(sys.argv[1], 'r') as infile:
-    with open('corpus.txt', 'r') as infile:
+    with open('FULL_english_ptb_train.sentences', 'r') as infile:
         text = infile.read()
     
     # clean up chars we don't want, and split into sentences/phrases (lines)

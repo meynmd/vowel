@@ -1,0 +1,19 @@
+Note: I am assuming you have changed the filename in funnyFormat.py
+Step1 : Transforming the large corpus data to standard format (Command : python funnyFormat.py > corpus_standard_format.txt)
+
+Step2 : Generating char_to_word model on the standard Corpus ( Command : python char_word.py > corpus_char_word_model)
+
+Step3 : Generating bi-gram  model on the standard Corpus ( Command : python bigram.py > corpus_bigram_model) (Note: Right now I am copying and pasting the data)
+
+Step4 : Generating word_to_char model on the standard corpus ( Command: python word_char.py > corpus_word_char_model)
+
+#This step is for composition
+Step5 : In order to compose the model Run this command (Command:  ./carmel corpus_char_word_model corpus_bigram_model corpus_word_char_model remove-vowels.fst > all_combined_model)
+
+Step6 : If you haven't generated no_vowel data Run this command ( Command : cat strings | carmel -slibOEWk 1 remove-vowels.fst > strings_no_vowel )
+
+Step7 : Now you have to generate sentences by adding vowels ( Command : cat strings_no_vowel | carmel -sribIEWk 1 all_combined_model > strings_vowel_restored )
+
+Step8 : To evaluate the result ( Command: python strings strings_vowel_restored)
+
+That's all you are done.
