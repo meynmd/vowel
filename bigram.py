@@ -8,7 +8,7 @@ def counting_bigrams(data):
     count_dict = {}
     for temp in data:
         loopCount += 1
-        if loopCount % 100 == 0:
+        if loopCount % 10 == 0:
             print(str(loopCount / len(data) * 100.) + ' %', file=sys.stderr)    
         i=0
         j=len(temp)-1
@@ -35,7 +35,7 @@ def construct_wfst(count_dict,unique_words):
     onePercent = math.floor(len(unique_words) / 100.)
     for cur_state in unique_words:
         count += 1
-        if count % 100 == 0:
+        if count % 10 == 0:
             print(str(count / len(unique_words) * 100.) + ' %', file=sys.stderr)    
         if cur_state in count_dict:
            # print('I am here')
@@ -91,6 +91,7 @@ if __name__ == '__main__':
             temp_data=[word.replace(' ','') for word in temp_data]
             data+=[['<BOS>']+temp_data+['<EOS>']]
 
+    print('counting unique words.', file=sys.stderr)
     unique_words=[]
     for temp in data:
         for i in range(len(temp)):
