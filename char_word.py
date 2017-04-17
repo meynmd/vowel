@@ -1,40 +1,61 @@
-
-
-def build_char_word_fst(data):
-    start_sent = []
-    all_sent = []
-    for word in data:
-        cur_state = None
-        for i in range(len(word)):
-            if i ==0:
-                #(0 ( 0 A *e*))
-                temp_1 = '(s (' + word[i] + ' ' + word[i] + ' *e*' + '))'
-                if temp_1 not in start_sent:
-                    start_sent += [temp_1]
-                cur_state = word[i]
+def construct_char_word(data_new):
+    start_set = []
+    all_set=[]
+    for j in range(len(data_new)):
+        data=data_new[j]
+        count=0
+        for i in range(len(data)):
+            word = None
+            if i == 0:
+                next_state = data[i] + '_' + str(i)+'_' + str(j)
+                temp_str = '(s ' + '(' + next_state + ' ' + data[i] + ' "<BOS>" ))'
+                if temp_str not in start_set:
+                    start_set += [temp_str]
+                cur_state = next_state
             else:
-                if word[i]==' ':
-                    continue
-                else:
-                    next_state = cur_state+word[i]
-                    temp_2 ='('+cur_state+' ('+next_state + ' '+ word[i]+' *e*'+' ))'
-                    if temp_2 not in all_sent:
-                        all_sent+=[ temp_2 ]
+                next_state = cur_state + data[i] + '_' + str(i) + '_' + str(j)
+                if data[i]=='_':
+                    word=data.split('_')[count]
+                    word = '"'+word+'"'
+                    count+=1
+                if i==len(data)-1:
+                    word = data.split('_')[-1]
+                    word = '"'+word+'"'
+                    temp_str = '(' + cur_state + ' (' + next_state + ' ' + data[i] + ' ' + word + ' ))'
+                    if temp_str not in all_set:
+                        all_set += [temp_str]
+                    cur_state = next_state
+                    temp_str = '(' + cur_state + ' ( e *e* *e* ))'
+                    if temp_str not in all_set:
+                        all_set += [temp_str]
+
+
+                if not word:
+                    word='*e*'
+
+                if i!=len(data)-1:
+                    temp_str = '(' + cur_state +' ('+next_state+' '+ data[i]+' '+word+' ))'
+                    if temp_str not in all_set:
+                        all_set+=[temp_str]
+
                     cur_state=next_state
 
 
-        if cur_state:
-            all_sent += ['( '+cur_state+ ' (e'+' *e* '+cur_state+' ))']
+
+
+
+
+
+
+
+
+
+
     print('e')
-    for temp in start_sent:
+    for temp in start_set:
         print(temp)
-    for temp in all_sent:
+    for temp in all_set:
         print(temp)
-
-
-
-
-
 
 
 
@@ -42,14 +63,9 @@ def build_char_word_fst(data):
 if __name__ == '__main__':
 
     data = []
-    with open('corpus_output.txt','r') as fp:
+    with open('strings', 'r') as fp:
         for line in fp.readlines():
-            line1=line.split('\n')[0]
-            temp_data = line1.split('_')
-            for word in temp_data:
-                if word in data:
-                    continue
-                else:
-                    data+=[word.strip()]
-
-    build_char_word_fst(data)
+            line1 = line.split('\n')[0]
+            data += [line1.replace(' ', '')]
+    print(data)
+    construct_char_word(data)

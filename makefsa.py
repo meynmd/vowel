@@ -90,9 +90,9 @@ def makeFsa(wordProbDict, bigramDict):
         # insert transition from initial state => 
         # state corresponding to this word as start of sentence
         if prob == 0:
-            fsa = fsa + '(F (' + stateName + '*e* 0.005))\n'
+            fsa = fsa + '(F (' + stateName + ' *e* '+ stateName +' 0.005))\n'
         else:
-            fsa = fsa + '(F (' + stateName + '*e* ' + str(prob) + '))\n'
+            fsa = fsa + '(F (' + stateName + ' *e* '+ stateName +' '+ str(prob) + '))\n'
 
         # insert transitions from this state => other states
         fsa = fsa + '(' + stateName + ' (F *e* 0.005))\n'
@@ -102,7 +102,7 @@ def makeFsa(wordProbDict, bigramDict):
             nwp = nextWordProbs.items()
             for nw, p in nwp:
                 nextStateName = ''.join(list(nw.split()))
-                fsa = fsa + '(' + stateName + ' (' + nextStateName + ' \"' + nw + '\" ' + \
+                fsa = fsa + '(' + stateName + ' (' + nextStateName + ' \"' + nw + '\" ' + ' '+nextStateName+' '+ \
                     str(p - MIN_PROB / len(nwp)) + '))\n'
 
         fsa = fsa + '\n'
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         filename = sys.argv[1]
     else:
-        filename = 'corpus.txt'
+        filename = 'test_wfst_data'
 	
     with open(filename) as infile:
         corpus = infile.read()
