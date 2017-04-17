@@ -35,12 +35,15 @@ if __name__ == '__main__':
                 else:
                     spacedWords.append(' '.join(list(word)))
 
-            output = output + ' _ '.join(spacedWords)
-
+            temp_str=' _ '.join(spacedWords)
+            if len(temp_str)>10:
+                output = output + temp_str
+                output += '\n'
         else:
             if i > 0:
-                output = output + ' _ ' + line
-        output += '\n'
+                if len(line)>4:
+                    output = output + ' _ ' + line
+                    output += '\n'
 
     print (output)
 

@@ -23,7 +23,7 @@ def makeTransitions(word, name):
 
 if __name__ == '__main__':
     txt = ''
-    with open('vocab.small', 'r') as infile:
+    with open('corpus_output.txt', 'r') as infile:
         txt = infile.read()
     
     words = txt.split('\n')
