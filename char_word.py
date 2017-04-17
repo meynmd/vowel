@@ -8,19 +8,23 @@ def build_char_word_fst(data):
         for i in range(len(word)):
             if i ==0:
                 #(0 ( 0 A *e*))
-                start_sent += ['(s ('+word[i]+' '+word[i]+' *e*'+'))']
+                temp_1 = '(s (' + word[i] + ' ' + word[i] + ' *e*' + '))'
+                if temp_1 not in start_sent:
+                    start_sent += [temp_1]
                 cur_state = word[i]
             else:
                 if word[i]==' ':
                     continue
                 else:
                     next_state = cur_state+word[i]
-                    all_sent+=[ '('+cur_state+' ('+next_state + ' '+ word[i]+' *e*'+' ))']
+                    temp_2 ='('+cur_state+' ('+next_state + ' '+ word[i]+' *e*'+' ))'
+                    if temp_2 not in all_sent:
+                        all_sent+=[ temp_2 ]
                     cur_state=next_state
 
 
         if cur_state:
-            all_sent += ['(e '+ '('+cur_state + ' '+' *e* '+cur_state+' ))']
+            all_sent += ['( '+cur_state+ ' (e'+' *e* '+cur_state+' ))']
     print('e')
     for temp in start_sent:
         print(temp)
