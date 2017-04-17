@@ -82,7 +82,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         filename = sys.argv[1]
     else:
-        filename = 'corpus.txt'
+        filename = 'corpus_full_formatted_data.txt'
     data = []
     with open(filename,'r') as fp:
         for line in fp.readlines():
@@ -104,6 +104,7 @@ if __name__ == '__main__':
     #print(len(unique_words))
     #print(data)
     count_dict=counting_bigrams(data)
+    print('I AM HERE')
     #print(count_dict)
     construct_wfst(count_dict,unique_words)
 

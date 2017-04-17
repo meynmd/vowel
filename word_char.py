@@ -45,8 +45,7 @@ def construct_word_character(data_new):
     loopcount = 0
     for data in data_new:
         loopcount += 1
-        if loopcount % 10 == 0:
-            print(str(loopcount / len(data_new) * 100.) + ' percent', file=sys.stderr)
+        print(str(loopcount / len(data_new) * 100.) + ' percent', file=sys.stderr)
         for i in range(len(data)):
             if i==0:
                 current_state='<BOS>'
@@ -123,7 +122,7 @@ def construct_word_character(data_new):
 
 
 if __name__ == '__main__':
-    data = []
+    data = set()
     if len(sys.argv) > 1:
         fname = sys.argv[1]
     else:
@@ -136,7 +135,7 @@ if __name__ == '__main__':
                 if word in data:
                     continue
                 else:
-                    data+=[word.replace(' ','')]
+                    data.add(word.replace(' ',''))
 
     construct_word_character(data)
 
