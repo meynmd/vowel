@@ -4,7 +4,8 @@ def makeTransitions(word, name):
 
     output = '(F (' + name + '_' + '0 *e* *e*))\n'
     currentState = name + '_' + '0'
-
+    word = word.replace(' ', '')
+    
     for letter in word:
         count += 1
         if letter == ' ' or letter == '\n':
