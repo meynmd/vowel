@@ -45,7 +45,7 @@ def construct_word_character(data_new):
     loopcount = 0
     for data in data_new:
         loopcount += 1
-        if loopcount % 1000 == 0:
+        if loopcount % 10 == 0:
             print(str(loopcount / len(data_new) * 100.) + ' percent', file=sys.stderr)
         for i in range(len(data)):
             if i==0:
@@ -55,7 +55,7 @@ def construct_word_character(data_new):
                 output_str = data[i]
                 temp_str= '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str +' ))'
 
-                temp_str.add(all_set)
+                all_set.add(temp_str)
                 # if temp_str not in all_set:
                 #     all_set+=[temp_str]
 
@@ -67,15 +67,16 @@ def construct_word_character(data_new):
                 input_str = '*e*'
                 output_str = data[i]
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
-                if temp_str not in all_set:
-                    all_set+=[temp_str]
+                all_set.add(temp_str)
+         	#if temp_str not in all_set:
+                #   all_set+=[temp_str]
                 current_state = nex_state
 
                 nex_state = '<BOS>'
                 input_str = '*e*'
                 output_str = '_'
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
-                temp_str.add(all_set)
+                all_set.add(temp_str)
                 # if temp_str not in all_set:
                 #     all_set+=[temp_str]
 
@@ -84,7 +85,7 @@ def construct_word_character(data_new):
                 input_str = '"<EOS>"'
                 output_str = '*e*'
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
-                temp_str.add(all_set)
+                all_set.add(temp_str)
                 # if temp_str not in all_set:
                 #     all_set+=[temp_str]
 
@@ -99,7 +100,7 @@ def construct_word_character(data_new):
                 input_str = '*e*'
                 output_str = data[i]
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
-                temp_str.add(all_set)
+                all_set.add(temp_str)
 
                 # if temp_str not in all_set:
                 #     all_set += [temp_str]
