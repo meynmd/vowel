@@ -27,7 +27,7 @@ if __name__ == '__main__':
         txt = infile.read()
     
     words = txt.split('\n')
-    fst = ''
+    fst = 'F\n\n'
     count = 0
     for word in words:
         count += 1
