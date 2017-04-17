@@ -1,3 +1,5 @@
+import sys
+
 def construct_char_word(data_new):
     start_set = []
     all_set=[]
@@ -63,7 +65,11 @@ def construct_char_word(data_new):
 if __name__ == '__main__':
 
     data = []
-    with open('corpus_full_formatted_data.txt', 'r') as fp:
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        filename = 'corpus_full_formatted_data.txt'
+    with open(filename, 'r') as fp:
         for line in fp.readlines():
             line1 = line.split('\n')[0]
             data += [line1.replace(' ', '')]

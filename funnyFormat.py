@@ -10,10 +10,13 @@ def removeChars(s, c):
     return s
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        filename = 'FULL_english_ptb_train.sentences'
     text = ''
 
-    #with open(sys.argv[1], 'r') as infile:
-    with open('FULL_english_ptb_train.sentences', 'r') as infile:
+    with open(filename, 'r') as infile:
         text = infile.read()
     
     # clean up chars we don't want, and split into sentences/phrases (lines)

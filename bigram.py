@@ -1,9 +1,15 @@
-
+import sys
+import math
 from collections import defaultdict
 
 def counting_bigrams(data):
+    onePercent = math.floor(len(data) / 100.)
+    loopCount = 0
     count_dict = {}
     for temp in data:
+        loopCount += 1
+        if loopCount % 100 == 0:
+            print(str(loopCount / len(data) * 100.) + ' %', file=sys.stderr)    
         i=0
         j=len(temp)-1
         while i+1<=j:
@@ -22,8 +28,15 @@ def counting_bigrams(data):
 def construct_wfst(count_dict,unique_words):
     start_set=[]
     all_set = []
-    for cur_state in unique_words:
+    
+    print('Constructing WFST.', file=sys.stderr)
+    count = 0
 
+    onePercent = math.floor(len(unique_words) / 100.)
+    for cur_state in unique_words:
+        count += 1
+        if count % 100 == 0:
+            print(str(count / len(unique_words) * 100.) + ' %', file=sys.stderr)    
         if cur_state in count_dict:
            # print('I am here')
             #print(cur_state)
@@ -66,9 +79,12 @@ def construct_wfst(count_dict,unique_words):
 
 
 if __name__ == '__main__':
-
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        filename = 'corpus.txt'
     data = []
-    with open('corpus_full_formatted_data.txt','r') as fp:
+    with open(filename,'r') as fp:
         for line in fp.readlines():
             line1=line.split('\n')[0]
             temp_data = line1.split('_')
@@ -80,6 +96,9 @@ if __name__ == '__main__':
         for i in range(len(temp)):
             if temp[i] not in data:
                 unique_words+=[temp[i]]
+
+
+    print('Computing bigrams. There are ' + str(len(unique_words)) + ' unique words.', file=sys.stderr)
 
     #print(len(unique_words))
     #print(data)
