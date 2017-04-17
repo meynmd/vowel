@@ -161,11 +161,20 @@ def extractWords(corpus):
 
 
 if __name__ == '__main__':
-    #corpus = 'Hello, world!!!  I am here; I am so glad to see you. How are you today? I am fine!'
     corpus = ''
-
-    with open('smallcorpus.txt') as infile:
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        filename = 'corpus.txt'
+	
+    with open(filename) as infile:
         corpus = infile.read()
+
+    if len(sys.argv) > 2:
+        if sys.argv[2] == '-f':
+            corpus = removeChars(corpus, ' ')
+            corpus = corpus.replace('_', ' ')
+
 
     outfile = open('wsj.fsa', 'w')
 
