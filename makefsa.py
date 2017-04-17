@@ -181,7 +181,7 @@ if __name__ == '__main__':
     corpus = removeChars(corpus, '~`@#$%^&*()-+=:;\"[]{}|/\\1234567890')
 
     vocab = extractWords(corpus)
-
+    print vocab
     bigrams = makeBigrams(extractSentences(corpus))
 
     conc = concordance(vocab)
