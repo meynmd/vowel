@@ -1,7 +1,11 @@
 import re
 import sys
+import unicodedata
 from collections import defaultdict
 
+
+MIN_PROB = 0.005
+stateNames = {}
 
 '''
 converts concordance-style dictionary into dictionary from
@@ -9,9 +13,7 @@ key => (# of occurrences) to
 key => (occurrences / # of keys in dict)
 '''
 def makeProbDict(dictionary):
-    dictType = type(list(dictionary.values())[0])
-    probDict = defaultdict(dictType)
-    probDict = {}
+    probDict = defaultdict(float)
     ks = dictionary.keys()
 
     for k in ks:
@@ -20,8 +22,9 @@ def makeProbDict(dictionary):
     return probDict
 
 
+
 '''
-bigrams = makeBigrams(corpus)
+bigrams = makeBigrams(sentences)
 
 takes a string consisting of sentences from which to extract bigrams
 
@@ -29,68 +32,37 @@ returns bigram model represented as dictionary of
 (string, string) => # of occurrences
 '''
 def makeBigrams(sentences):
+    print('Constructing bigrams.', file=sys.stderr)
+
     sentences = [s for s in sentences if s != '']
-    bigrams = defaultdict(int)
+    bigrams = defaultdict(defaultdict)
 
-    # split sentences into words
     for s in sentences:
+        s = cleanupString(s)
         s = str.upper(s)
-        #s = re.split(r'[@><#$%^&\*+_=}{/)(\",\s]\s*', s)
-
-        s = re.split(r'[,.?!\s]\s*', s)
-        #if len(s) < 2:
-        #    bigrams[(s, '')] = bigrams[(s, '')] + 1
-        #    continue
+        s = re.split(r'[,\s]\s*', s)
+        s = [w for w in s if w != '']
+        if len(s) < 2:
+            continue
 
         # get each pair of consecutive words in each sentence
         for i in range(len(s) - 1):
-            w1 = removeChars(s[i].strip(), '!@#$%^&*()-=+{}<>/\\~\"')
-            w2 = removeChars(s[i + 1].strip(), '!@#$%^&*()-=+{}<>/\\~\"')
-            #if w1 == None or w2 == None:
-            #    continue
-	    
-            if len(w1) == 0 or len(w2) == 0:
-                continue	    
-            w1 = ' '.join(list(w1))
-            w2 = ' '.join(list(w2))
-            if not (s[i].isalpha() and s[i+1].isalpha()):
-                print(w1, ' ', w2, ' is not alpha', file=sys.stderr)
-                continue
-            b = (w1, w2)
-            bigrams[b] = bigrams[b] + 1
+            w1 = ' '.join(list(s[i]))
+            w2 = ' '.join(list(s[i + 1]))
+            if bigrams.get(w1) == None:
+                bigrams[w1] = defaultdict(int)
+            bigrams[w1][w2] = bigrams[w1][w2] + 1
 
     # record probability of each pair
-    bigrams = makeProbDict(bigrams)
+    for k in bigrams.keys():
+        bigrams[k] = makeProbDict(bigrams[k])
 
     return bigrams
 
 
 
-def removeChars(string, seps):
-    #print('before: ', string)
-    for s in list(seps):
-        string = string.replace(s, '')
-    return string
-
-def extractSentences(corpus):
-    sentences = re.split(r'[@><#$%^&\*-+=}{/)(\".?!:;]', corpus)
-    return sentences
-
-
-
-def extractWords(corpus):
-    corpus = str.upper(corpus)
-
-    # Beazley & Jones, Python Cookbook 3e
-    words = re.split(r'[)(.?!:;\s]\s*', corpus)
-
-    words = [' '.join(list(w)) for w in words if w != '']
-
-    return words
-
-
-
 def concordance(wordList):
+    print('Building concordance. Lexicon size: ' + str(len(wordList)), file=sys.stderr)
     conc = defaultdict(int)
 
     for w in wordList:
@@ -102,44 +74,102 @@ def concordance(wordList):
 
 def makeFsa(wordProbDict, bigramDict):
     fsa = 'F\n\n'
+    print('Building FSA.', end='', file=sys.stderr)
+    baseProb = str(MIN_PROB / len(wordProbDict.keys()))
     count = 0
-    print('making FSA. Lexicon size: ', len(wordProbDict), file=sys.stderr)
-    for word, prob in wordProbDict.items():
+
+    wpd = wordProbDict.items()
+    for word, prob in wpd:
         count += 1
-        if count % 100 == 0:
-            print('.', file=sys.stderr)
+        if count % 1000 == 0:
+            print('.', end='', file=sys.stderr)
+
+        stateName = ''.join(list(word.split()))
+        stateNames[word] = stateName
+
         # insert transition from initial state => 
         # state corresponding to this word as start of sentence
-        stateName = ''.join(list(word.split()))
-        fsa = fsa + '(F (' + stateName + ' ' + word + ' ' + str(prob + 0.05) + '))\n'
-        fsa = fsa + '(F (' + stateName + ' ' + word + ' _ '+ ' ' + str(prob + 0.05) + '))\n'
+        if prob == 0:
+            fsa = fsa + '(F (' + stateName + '*e* 0.005))\n'
+        else:
+            fsa = fsa + '(F (' + stateName + '*e* ' + str(prob) + '))\n'
+
+        # insert transitions from this state => other states
         fsa = fsa + '(' + stateName + ' (F *e* 0.005))\n'
 
-        # insert transitions corresponding to bigrams in dictionary
-        bigs = [((w1, w2), p) for ((w1, w2), p) in bigramDict.items() if w1 == word]
-        for ((w1, w2), p) in bigs:
-            nextStateName = ''.join(list(w2.split()))
-            fsa = fsa + '(' + stateName + ' (' + nextStateName + ' ' + w2 + ' ' + str(p + 0.05) + '))\n'
-            #fsa = fsa + '(' + stateName + ' (' + nextStateName + ' ' + w2 + ' _ ' + ' ' + str(p) + '))\n'
+        nextWordProbs = bigramDict.get(word)
+        if nextWordProbs != None:
+            nwp = nextWordProbs.items()
+            for nw, p in nwp:
+                nextStateName = ''.join(list(nw.split()))
+                fsa = fsa + '(' + stateName + ' (' + nextStateName + ' \"' + nw + '\" ' + \
+                    str(p - MIN_PROB / len(nwp)) + '))\n'
+
         fsa = fsa + '\n'
+
+    #print('\nAdding extra transitions.', end='', file = sys.stderr)
+    #count = 0
+    #for word, prob in wpd:
+    #    count += 1
+    #    if count % 1000 == 0:
+    #        print('.', end='', file=sys.stderr)
+    #    for otherWord, junk in wpd:
+    #        if word == otherWord:
+    #            continue
+    #        fsa = fsa + '(' + stateName + ' (' + stateNames[otherWord] + \
+    #            ' \"' + otherWord + '\" ' + baseProb + '))\n'
 
     return fsa
 
 
 
+def removeChars(s, c):
+    for sep in list(c):
+        s = s.replace(sep, ' ')
+    return s
+
+
+
+def cleanupString(s):
+    badchars = []
+    for c in s:
+        if ord(c) > 127:
+            badchars.append(c)
+    for c in badchars:
+        s.replace(c, '')
+
+    return s
+
+
+
+def extractSentences(corpus):
+    sentences = re.split(r'[,.?!:;]', corpus)
+    return sentences
+
+
+
+def extractWords(corpus):
+    corpus = str.upper(corpus)
+
+    # Beazley & Jones, Python Cookbook 3e
+    words = re.split(r'[,.?!:;\s]\s*', corpus)
+
+    words = [' '.join(list(w)) for w in words if w != '']
+
+    return words
+
+
+
 if __name__ == '__main__':
+    #corpus = 'Hello, world!!!  I am here; I am so glad to see you. How are you today? I am fine!'
     corpus = ''
-    with open(sys.argv[1], 'r') as corpusFile:
-        corpus = corpusFile.read()
-        #for line in corpusFile.readlines():
-        #    line = line.strip()
-        #    print(line)
-        #    corpus += line
-    #corpus = '.'.join(corpus)	
-    
-    #print(corpus)
-    
-    corpus = removeChars(corpus, '!@$%^&*()-+1234567890<>{}[]|;:,.?!/~\"')
+
+    with open('smallcorpus.txt') as infile:
+        corpus = infile.read()
+
+    outfile = open('wsj.fsa', 'w')
+
+    corpus = removeChars(corpus, '~`@#$%^&*()-+=:;\"[]{}|/\\1234567890')
 
     vocab = extractWords(corpus)
 
@@ -151,3 +181,6 @@ if __name__ == '__main__':
     fsa = makeFsa(wordProb, bigrams)
     
     print (fsa)
+    outfile.write(fsa)
+
+
