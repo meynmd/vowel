@@ -78,5 +78,5 @@ if __name__ == '__main__':
         for line in fp.readlines():
             line1 = line.split('\n')[0]
             data += [line1.replace(' ', '')]
-    print(data)
+    #print(data)
     construct_char_word(data)

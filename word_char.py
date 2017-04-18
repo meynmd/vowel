@@ -67,7 +67,7 @@ def construct_word_character(data_new):
                 output_str = data[i]
                 temp_str = '(' + current_state + ' (' + nex_state + ' ' + input_str + ' ' + output_str + ' ))'
                 all_set.add(temp_str)
-         	#if temp_str not in all_set:
+                #if temp_str not in all_set:
                 #   all_set+=[temp_str]
                 current_state = nex_state
 
@@ -105,7 +105,7 @@ def construct_word_character(data_new):
                 #     all_set += [temp_str]
 
                 current_state = nex_state
-
+    all_set.add(end)
     print('e')
     for temp in start_set:
         print(temp)
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         fname = sys.argv[1]
     else:
-        fname = 'corpus_full_formatted_data.txt'
+        fname = 'corpus_v2'
     with open(fname, 'r') as fp:
         for line in fp.readlines():
             line1=line.split('\n')[0]

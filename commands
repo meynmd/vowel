@@ -17,3 +17,6 @@ Step7 : Now you have to generate sentences by adding vowels ( Command : cat stri
 Step8 : To evaluate the result ( Command: python strings strings_vowel_restored)
 
 That's all you are done.
+
+
+echo '"<BOS>" "SOUTHWIDE" "INC" "<EOS>"' | ./carmel_mac -sribIEWk 1 corpus_word_char_model_v2

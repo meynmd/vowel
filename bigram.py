@@ -51,10 +51,9 @@ def construct_wfst(count_dict,unique_words):
                     if temp_str not in start_set:
                         start_set+=[ temp_str ]
                 else:
-                    try:
-                        prob = count_dict[cur_state][next_state]/total
-                    except:
-                        print('I am here')
+
+                    prob = count_dict[cur_state][next_state]/total
+
 
                     if next_state=='<EOS>':
                         temp_str='(' + cur_state + ' (' + next_state + ' "' + cur_state + '" "' + cur_state + '" ' + str(prob) + '))'
@@ -67,6 +66,10 @@ def construct_wfst(count_dict,unique_words):
                     else:
                         temp_str='(' + cur_state + ' (' + next_state + ' "' + cur_state + '" "' + cur_state + '" ' + str(prob) + '))'
                         all_set += [temp_str]
+                        cur_state_1 = next_state
+                        temp_str= '(' + cur_state_1 + ' (e' +   ' *e*' +  ' "' + cur_state_1 + '" ' + str('1') + '))'
+                        if temp_str not in all_set:
+                            all_set+=[temp_str]
 
     print('e')
     for temp in start_set:
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         filename = sys.argv[1]
     else:
-        filename = 'corpus_full_formatted_data.txt'
+        filename = 'corpus_v2'
     data = []
     with open(filename,'r') as fp:
         for line in fp.readlines():
@@ -104,7 +107,7 @@ if __name__ == '__main__':
     #print(len(unique_words))
     #print(data)
     count_dict=counting_bigrams(data)
-    print('I AM HERE')
+    #print('I AM HERE')
     #print(count_dict)
     construct_wfst(count_dict,unique_words)
 
